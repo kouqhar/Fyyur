@@ -8,6 +8,7 @@ import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
@@ -21,6 +22,7 @@ app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # TODO: connect to a local postgresql database
 
@@ -425,10 +427,9 @@ def create_artist_submission():
         image_link = request.get_json()['image_link']
         facebook_link = request.get_json()['facebook_link']
         seeking_description = request.get_json()['seeking_description']
-        website_link = request.get_json()['website_link']
         seeking_venue = request.get_json()['seeking_venue']
         venue = Venue(name=name, city=city, genres=genres, website_link=website_link,
-                      phone=phone, image_link=image_link, facebook_link=facebook_link, seeking_description=seeking_description, seeking_venue=seeking_venue, website_link=website_link, genres=genres)
+                      phone=phone, image_link=image_link, facebook_link=facebook_link, seeking_description=seeking_description, seeking_venue=seeking_venue)
         body['name'] = venue.name
         body['city'] = venue.city
         body['genres'] = venue.genres
