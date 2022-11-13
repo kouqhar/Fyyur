@@ -91,7 +91,31 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 @app.route('/')
 def index():
-    return render_template('pages/home.html')
+    dataList = []
+    try:
+        fetchedData = Show.query.order_by(db.desc(Show.start_time))
+        for data in fetchedData:
+            dataList.append({
+                'artist_id': data.artist_id,
+                'artist_name': data.artists.name,
+                'artist_image_link': data.artists.image_link,
+                'artist_state': data.artists.state,
+                'venue_id': data.venue_id,
+                'venue_name': data.venues.name,
+                'venue_image_link': data.venues.image_link,
+                'venue_state':data.venues.state
+            })
+        db.session.commit()
+    except:
+        db.session.rollback()
+        error = True
+        print(sys.exc_info)
+    finally:
+        db.session.close()
+    if error:
+        abort(500)
+    else:
+        return render_template('pages/home.html', show=dataList)
 
 
 #  Venues
